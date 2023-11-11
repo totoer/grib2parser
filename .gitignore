@@ -1,0 +1,5 @@
+__pycache__/
+*.py[cod]
+
+fixture/icon_d2
+fixture/*.png
