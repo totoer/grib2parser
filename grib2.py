@@ -70,6 +70,7 @@ class UInt32(CType):
         super().__init__('>I', self.size)
 
 
+# TODO: it's too much
 class UInt64(CType):
 
     @property
@@ -98,6 +99,7 @@ class ErrorNotSupportedTemplate(Exception):
 
 class Section:
 
+    # TODO: Refactor it, use __new__ or dataclass
     @property
     def fields(self) -> tuple[tuple[str, CType]]:
         raise NotImplementedError()
@@ -141,10 +143,10 @@ class Section:
 
 class Section0(Section):
 
+    # TODO: Need to add a description fields
     @property
     def fields(self):
         return (
-        # ('grib', UInt32(),),
             ('skip', UInt16(),),
             ('discipline', UInt8(),),
             ('edition_number', UInt8(),),
@@ -243,6 +245,7 @@ class Section3(Section):
             )
         }
 
+    # TODO: Need to add a description fields
     @property
     def fields(self):
         return (
@@ -366,6 +369,7 @@ class ErrorS5BitsValue(Exception): pass
 
 class Section5(Section):
 
+    # TODO: Need to add a description fields
     @property
     def data_templates(self):
         return {
@@ -389,6 +393,7 @@ class Section5(Section):
             )
         }
 
+    # TODO: Need to add a description fields
     @property
     def fields(self):
         return (
@@ -428,7 +433,7 @@ class Section5(Section):
         
         return result
 
-
+# TODO: Needs to be removed. Add for testing, reference: https://github.com/NOAA-EMC/NCEPLIBS-g2c/blob/develop/src/int_power.c
 def power(x: float, y: int):
     if y < 0:
         y = -y
@@ -451,6 +456,7 @@ class Section7:
     def __init__(self, fp: GRIB2File, section_len: int, s5: Section5):
         self._fp = fp
 
+        # TODO: Add support another encoding
         self._reference = s5.reference
         self._decimal_scale = power(10., -s5.decimal_scale)
         self._binary_scale = power(2., s5.binary_scale)
@@ -481,6 +487,7 @@ class Section7:
             self._c += 1
 
     def next(self):
+        # TODO: Remove it
         if self._bits == 0:
             return
         

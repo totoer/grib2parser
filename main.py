@@ -29,6 +29,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 async def process(i: int, d: datetime, loop: asyncio.AbstractEventLoop, url: str):
     try:
+        # TODO: Move it to WGF4
         current_time = d + timedelta(hours=i)
         datetime_part = datetime.strftime(current_time, '%d.%m.%Y_%H:00')
         foldername = '%s_%d' % (datetime_part, int(current_time.timestamp()))
@@ -40,19 +41,13 @@ async def process(i: int, d: datetime, loop: asyncio.AbstractEventLoop, url: str
         async with GRIB2File(loop, url) as grib_file:
             grib = GRIB2(grib_file)
 
-            async with WGF4(loop=loop, path=filepath) as wgf4:
-                la1 = None
-                la2 = None
-                lo1 = None
-                lo2 = None
-
-                latitude = None
-                longtituge = None
-                
+            async with WGF4(loop=loop, path=filepath) as wgf4:                
                 wgf4_headers = None
                 
                 async for m in grib.messages():
                     if not wgf4_headers:
+                        # TODO: Can la1, la2 etc be different among messages?
+                        # TODO: Calc the multiplier correct
                         wgf4_headers = WGF4Headers(
                                     latitude1=m.s3.la1, latitude2=m.s3.la2,
                                     longtituge1=m.s3.lo1, longtituge2=m.s3.lo2,

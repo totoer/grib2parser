@@ -28,6 +28,7 @@ class GRIB2File:
 
     async def open(self) -> GRIB2File:
         if self._url.startswith('http'):
+            # TODO: Looks like an unnecessary dependency
             async with aiohttp.ClientSession() as session:
                 async with session.get(self._url) as resp:
                     if resp.status != 200:
@@ -63,6 +64,7 @@ class GRIB2File:
         return self._fp.read(size)
 
     async def read(self, size: int):
+        # TODO: Figure it out. Are you sure this is better than blocking?
         resutl = await self._loop.run_in_executor(None, self._read, size)
         return resutl
     
