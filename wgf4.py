@@ -1,8 +1,10 @@
 
+import os
 import tempfile
 import shutil
 import struct
 import asyncio
+from datetime import datetime
 from io import BufferedWriter
 from dataclasses import dataclass
 
@@ -56,9 +58,16 @@ class WGF4Headers:
 
 class WGF4:
 
-    def __init__(self, loop: asyncio.AbstractEventLoop, path: str):
+    def __init__(self, loop: asyncio.AbstractEventLoop, workdir: str, d: datetime):
         self._loop = loop
-        self._path = path
+        
+        datetime_part = datetime.strftime(d, '%d.%m.%Y_%H:00')
+        foldername = '%s_%d' % (datetime_part, int(d.timestamp()))
+        folderpath = os.path.join(workdir, foldername)
+        if not os.path.isdir(folderpath):
+            os.mkdir(folderpath)
+        
+        self._path = os.path.join(folderpath, 'PRATE.wgf4')
         self._fp = tempfile.NamedTemporaryFile()
         headers_size = 7 * 4 + 4
         self._fp.write(bytes(headers_size))

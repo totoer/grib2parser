@@ -33,12 +33,17 @@ class GRIB2File:
                 async with session.get(self._url) as resp:
                     if resp.status != 200:
                         raise ErrorGRIB2FielNotFount(resp.status)
+                    
                     data = await resp.read()
-                    tmp_fp = tempfile.NamedTemporaryFile(mode='wb')
-                    await self._loop.run_in_executor(None, self._write_tmp, tmp_fp, data)
-                    bz2_fp = bz2.open(filename=tmp_fp.name, mode='rb')
-                    self._tmp_fp = tmp_fp
-                    self._fp = bz2_fp
+                    self._tmp_fp = tempfile.NamedTemporaryFile(mode='wb')
+                    await self._loop.run_in_executor(None, self._write_tmp, self._tmp_fp, data)
+
+                    if self._url.endswith('.bz2'):
+                        bz2_fp = bz2.open(filename=self._tmp_fp.name, mode='rb')
+                        self._fp = bz2_fp
+
+                    else:
+                        self._fp = open(self._tmp_fp.name, mode='rb')
 
         elif self._url.startswith('file'):
             path = self._url[len('file://'):]
